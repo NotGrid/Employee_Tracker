@@ -6,21 +6,23 @@ USE employeeTracker_db;
 
 -- dep needs dep names and ids
 CREATE TABLE departments (
-    departmentID INT NOT NULL,
+    id INT NOT NULL,
     name VARCHAR(25), 
 );
 -- roles needs job title, rold id, dep where its belongs to, and salary
 CREATE TABLE roles(
-    job VARCHAR(25),
-    roleID INT NOT NULL,
+    title VARCHAR(25),
+    id INT NOT NULL,
     department INT,
     salary INT,
 );
 -- emp needs ids, first and last names, job titles, dep, salaries, and managers name
 CREATE TABLE employees(
-    employeeID INT,
-    firstName VARCHAR(25),
-    lastName VARCHAR(25),
-    job INT,
+    id INT,
+    first_name VARCHAR(25),
+    last_name VARCHAR(25),
+    title INT,
+    department INT,
+    salary INT,
     manager INT,
 );
