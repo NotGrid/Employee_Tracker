@@ -6,23 +6,24 @@ USE employeeTracker_db;
 
 -- dep needs dep names and ids
 CREATE TABLE departments (
-    id INT NOT NULL,
-    name VARCHAR(25), 
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(30) 
 );
 -- roles needs job title, rold id, dep where its belongs to, and salary
 CREATE TABLE roles(
-    title VARCHAR(25),
-    id INT NOT NULL,
-    department INT,
-    salary INT,
+    title VARCHAR(30),
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    department_id INT,
+    FOREIGN KEY (department_id) REFERENCES departments (id) ON DELETE CASCADE,
+    salary DECIMAL
 );
 -- emp needs ids, first and last names, job titles, dep, salaries, and managers name
 CREATE TABLE employees(
-    id INT,
-    first_name VARCHAR(25),
-    last_name VARCHAR(25),
-    title INT,
-    department INT,
-    salary INT,
-    manager INT,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(30),
+    last_name VARCHAR(30),
+    role_id INT,
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
+    manager_id INT,
+    FOREIGN KEY (manager_id) REFERENCES employees (id) ON DELETE SET NULL
 );
