@@ -1,7 +1,18 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
-const cTable = require('console.table');
+require('console.table');
 
+const db = mysql.createConnection(
+    {
+        host: 'localhost',
+        // MySQL username,
+        user: 'root',
+        // TODO: Add MySQL password here
+        password: 'password',
+        database: 'employeeTracker_db'
+    },
+    console.log(`Connected to the employeeTracker_db database.`)
+);
 // prompt general questions
 
 function overview() {
@@ -12,22 +23,51 @@ function overview() {
             message: 'Select an option',
             choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add a role', 'Add an employee', 'Update an employee role'],
         },
-    ]).then(({selectedOption}) => {
-        if(selectedOption === 'View all departments') {
+    ]).then(({ selectedOption }) => {
+        if (selectedOption === 'View all departments') {
             viewAllDepartments();
-        } else if(selectedOption === 'View all roles') {
+        } else if (selectedOption === 'View all roles') {
             viewAllRoles();
-        } else if(selectedOption === 'View all employees') {
+        } else if (selectedOption === 'View all employees') {
             viewAllEmployees();
-        } else if(selectedOption === 'Add a department') {
+        } else if (selectedOption === 'Add a department') {
             addADepartment();
-        }else if(selectedOption === 'Add a role') {
+        } else if (selectedOption === 'Add a role') {
             addARole();
-        }else if(selectedOption === 'Add an employee') {
+        } else if (selectedOption === 'Add an employee') {
             addAnEmployee();
-        }else {
+        } else {
             updateRole();
         }
     })
 };
+
+async function viewAllDepartments() {
+    const dept = await db.promise().query('SELECT * FROM departments');
+    console.table(dept[0]);
+    overview();
+};
+
+async function addARole() {
+    const departments = await db.promise().query('SELECT name AS name, id AS value FROM departments');
+    const userInput = await inquirer.prompt([{
+        type: 'input',
+        message: 'What is the role title?',
+        name: 'title',
+    },
+    {
+        type: 'list',
+        choices: departments[0],
+        message: 'What is the department?',
+        name: 'department_id',
+    },
+    {
+        type: 'input',
+        message: 'What is the salary?',
+        name: 'salary',
+    }]);
+    const data = await db.promise().query('INSERT INTO roles SET ?', userInput);
+    console.log(data)
+    overview();
+}
 overview();
