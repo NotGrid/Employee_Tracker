@@ -1,17 +1,17 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 require('console.table');
+require('dotenv').config();
 
 const db = mysql.createConnection(
     {
         host: 'localhost',
         // MySQL username,
-        user: 'root',
-        // TODO: Add MySQL password here
-        password: 'password',
-        database: 'employeeTracker_db'
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
     },
-    console.log(`Connected to the employeeTracker_db database.`)
+    console.log(`Connected to the database.`)
 );
 // prompt general questions
 
