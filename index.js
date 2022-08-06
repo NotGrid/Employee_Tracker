@@ -48,6 +48,20 @@ async function viewAllDepartments() {
     overview();
 };
 
+async function viewAllRoles() {
+const role = await db.promise().query('SELECT * FROM roles');
+console.table(role[0]);
+overview();
+};
+
+async function viewAllEmployees() {
+    const employ = await db.promise().query('SELECT * FROM employees');
+    console.table(employ[0]);
+    overview();
+};
+
+// add department code here
+
 async function addARole() {
     const departments = await db.promise().query('SELECT name AS name, id AS value FROM departments');
     const userInput = await inquirer.prompt([{
