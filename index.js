@@ -49,18 +49,27 @@ async function viewAllDepartments() {
 };
 
 async function viewAllRoles() {
-const role = await db.promise().query('SELECT * FROM roles');
-console.table(role[0]);
-overview();
+    const role = await db.promise().query('SELECT * FROM roles');
+    console.table(role[0]);
+    overview();
 };
 
 async function viewAllEmployees() {
-    const employ = await db.promise().query('SELECT * FROM employees');
+    const employ = await db.promise().query('SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT (manager.first_name, " ", manager.last_name) AS manager FROM employees LEFT JOIN roles ON employees.role_id = roles.id LEFT JOIN departments ON roles.department_id = departments.id LEFT JOIN employees manager ON employees.manager_id = manager.id');
     console.table(employ[0]);
     overview();
 };
 
-// add department code here
+async function addADepartment() {
+    const userInput = await inquirer.prompt([{
+        type: 'input',
+        message: 'What is the department title?',
+        name: 'name',
+    }]);
+    const data = await db.promise().query('INSERT INTO departments SET ?', userInput);
+    console.log(data);
+    overview();
+};
 
 async function addARole() {
     const departments = await db.promise().query('SELECT name AS name, id AS value FROM departments');
@@ -83,5 +92,54 @@ async function addARole() {
     const data = await db.promise().query('INSERT INTO roles SET ?', userInput);
     console.log(data)
     overview();
-}
+};
+
+async function addAnEmployee() {
+    const roles = await db.promise().query('SELECT title AS name, id AS value FROM roles');
+    const manager_id = await db.promise().query("SELECT CONCAT(first_name, ' ', last_name) AS name, id AS value FROM employees");
+    const userInput = await inquirer.prompt([{
+        type: 'input',
+        message: 'What is the employee first name?',
+        name: 'first_name',
+    },
+    {
+        type: 'input',
+        message: 'What is the employee last name',
+        name: 'last_name',
+    },
+    {
+        type: 'list',
+        message: 'What is the employee role?',
+        choices: roles[0],
+        name: 'role_id',
+    },
+    {
+        type: 'list',
+        message: 'Who is the employee direct manager?',
+        choices: manager_id[0],
+        name: 'manager_id',
+    }]);
+    
+    const data = await db.promise().query('INSERT INTO employees SET ?', userInput);
+    console.log(data);
+    overview();
+};
+
+async function updateRole() {
+    const updateEmployee = await db.promise().query("SELECT CONCAT(first_name, ' ', last_name) AS name FROM employees");
+    const updateRole = await db.promise().query('SELECT title AS name FROM roles');
+    const userInput = await inquirer.prompt([{
+        type: 'list',
+        message: 'Which employee would you like to change?',
+        choices: updateEmployee[0],
+        name: 'name',
+    },
+    {
+        type: 'list',
+        message: 'What is the new role?',
+        choices: updateRole[0],
+        name: 'title'
+    }]);
+    // need to complete updateRole---------------
+};
 overview();
