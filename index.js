@@ -126,8 +126,8 @@ async function addAnEmployee() {
 };
 
 async function updateRole() {
-    const updateEmployee = await db.promise().query("SELECT CONCAT(first_name, ' ', last_name) AS name FROM employees");
-    const updateRole = await db.promise().query('SELECT title AS name FROM roles');
+    const updateEmployee = await db.promise().query("SELECT CONCAT(first_name, ' ', last_name) AS name, id AS value FROM employees");
+    const updateRole = await db.promise().query('SELECT title AS name, id AS value FROM roles');
     const userInput = await inquirer.prompt([{
         type: 'list',
         message: 'Which employee would you like to change?',
@@ -140,6 +140,7 @@ async function updateRole() {
         choices: updateRole[0],
         name: 'title'
     }]);
-    // need to complete updateRole---------------
+    const dbUpdate = await db.promise().query('UPDATE employees SET role_id=? WHERE id=?', [userInput.title, userInput.name]);
+    viewAllEmployees();
 };
 overview();
